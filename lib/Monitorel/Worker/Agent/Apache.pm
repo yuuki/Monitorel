@@ -2,8 +2,8 @@ package Monitorel::Worker::Agent::Apache;
 use strict;
 use warnings;
 use utf8;
-use feature qw(switch);
 use parent qw(Monitorel::Worker);
+
 use Carp qw(croak);
 use LWP::UserAgent;
 
@@ -69,15 +69,21 @@ sub _line_to_stat_to_value {
     my $line = shift;
 
     my ($stat, $value) = split(/: /, $line);
-    given ($stat) {
-        when (/Total Accesses/) { $stat = $STAT_NAMES->[0] }
-        when (/Total kBytes/  ) { $stat = $STAT_NAMES->[1] }
-        when (/BusyServers/   ) { $stat = $STAT_NAMES->[4] }
-        when (/IdleServers/   ) { $stat = $STAT_NAMES->[5] }
-        when (/Scoreboard/    ) {
-            $stat  = $STAT_NAMES->[6];
-            $value = length $value
-        }
+    if ($stat eq 'Total Accesses') {
+        $stat = $STAT_NAMES->[0];
+    }
+    elsif ($stat eq 'Total kBytes') {
+        $stat = $STAT_NAMES->[1];
+    }
+    elsif ($stat eq 'BusyServers') {
+        $stat = $STAT_NAMES->[4];
+    }
+    elsif ($stat eq 'IdleServers') {
+        $stat = $STAT_NAMES->[5];
+    }
+    elsif ($stat eq 'Scoreboard') {
+        $stat  = $STAT_NAMES->[6];
+        $value = length $value;
     }
     ($stat, $value);
 }

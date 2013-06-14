@@ -1,6 +1,7 @@
 package Monitorel::Worker::Agent::Munin;
 use strict;
 use warnings;
+use utf8;
 use parent qw(Monitorel::Worker);
 
 use Carp qw(croak);

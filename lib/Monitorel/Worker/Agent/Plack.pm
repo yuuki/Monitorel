@@ -3,7 +3,6 @@ use strict;
 use warnings;
 use parent 'Monitorel::Worker';
 
-use feature qw(switch);
 use Carp qw(croak);
 use LWP::UserAgent;
 
@@ -62,16 +61,20 @@ sub _line_to_stat_to_value {
 
     my ($stat, $value) = split(/: /, $line);
     return () unless $stat;
-    given ($stat) {
-        when (/Uptime/        ) {
-            $stat = $STAT_NAMES->[0];
-            $value = [split(/ /, $value)]->[0];
-        }
-        when (/Total Accesses/) { $stat = $STAT_NAMES->[1]; }
-        when (/BusyWorkers/   ) { $stat = $STAT_NAMES->[2]; }
-        when (/IdleWorkers/)    { $stat = $STAT_NAMES->[3]; }
+    if ($stat eq 'Uptime') {
+        $stat = $STAT_NAMES->[0];
+        $value = [split(/ /, $value)]->[0];
     }
-    ($stat, $value);
+    elsif ($stat eq 'Total Accesses') {
+        $stat = $STAT_NAMES->[1];
+    }
+    elsif ($stat eq 'BusyWorkers') {
+        $stat = $STAT_NAMES->[2];
+    }
+    elsif ($stat eq 'IdleWorkers') {
+        $stat = $STAT_NAMES->[3];
+    }
+    return ($stat, $value);
 }
 
 

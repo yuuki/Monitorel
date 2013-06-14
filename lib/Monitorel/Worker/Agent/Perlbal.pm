@@ -2,7 +2,6 @@ package Monitorel::Worker::Agent::Perlbal;
 use strict;
 use warnings;
 use parent qw(Monitorel::Worker);
-use feature qw(switch);
 
 use Carp qw(croak);
 use Net::Telnet;
@@ -76,16 +75,14 @@ sub _line_to_stat_to_value {
     if ($stat =~ /(.*):$/) {
         $stat = $1;
     }
-    given ($stat) {
-        when (/stime/)  { $stat = "Stime"    }
-        when (/utime/)  { $stat = "Utime"    }
-        when (/reqs/)   { $stat = "Requests" }
-        when (/cur/)    { $stat = "CurFd"    }
-        when (/max/)    { $stat = "MaxFd"    }
-        when (/uptime/) { $stat = "Uptime"   }
-    }
+    if    ($stat eq 'stime' ) { $stat = "Stime"    }
+    elsif ($stat eq 'utime' ) { $stat = "Utime"    }
+    elsif ($stat eq 'reqs'  ) { $stat = "Requests" }
+    elsif ($stat eq 'cur'   ) { $stat = "CurFd"    }
+    elsif ($stat eq 'max'   ) { $stat = "MaxFd"    }
+    elsif ($stat eq 'uptime') { $stat = "Uptime"   }
 
-    ($stat, $value);
+    return ($stat, $value);
 }
 
 1;

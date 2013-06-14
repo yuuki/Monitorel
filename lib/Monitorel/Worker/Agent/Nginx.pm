@@ -3,7 +3,6 @@ use strict;
 use warnings;
 use parent 'Monitorel::Worker';
 
-use feature qw(switch);
 use Carp qw(croak);
 use LWP::UserAgent;
 
