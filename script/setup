@@ -1,0 +1,12 @@
+#!/bin/sh
+
+dbname=$1
+
+if [ "${dbname}" = '' ] ; then
+    dbname=theschwartz
+fi
+
+if mysqladmin -uroot create $dbname ; then
+    echo "Init database: ${dbname}"
+    mysql -uroot $dbname < db/schema_theschwartz.sql
+fi

@@ -4,12 +4,68 @@ use warnings;
 use 5.008005;
 our $VERSION = "0.01";
 
-
-
 1;
 __END__
 
 =encoding utf-8
+
+=head1 NAME
+
+Monitorel - Generate graph for server statistics
+
+=head1 SYNOPSIS
+
+    use TheSchwartz;
+    use Monitorel::Worker::Agent::Nginx;
+
+    my $rrd_dir = 'path/to/rrdfile_dir';
+    Hatena::Mackerel::Worker::Store::RRD::Path->set_rrddir($rrd_dir);
+
+    my $client = TheSchwartz->new(
+        databases => [{ dsn => $dsn, user => $user, passwd => $passwd }],
+        verbose   => 1,
+    );
+
+    my $job_id = $client->insert('Hatena::Mackerel::Worker::Agent::Nginx', {
+        fqdn  => 'localhost',
+        stats => [qw(ActiveConnections AcceptedConnections Requests)],
+        tag   => 'nginx',   # Option
+        type  => {          # Option
+            ActiveConnections   => 'gauge',
+            AcceptedConnections => 'derive',
+            Requests            => 'derive',
+        },
+        label => {          # Option
+            ActiveConnections   => 'active',
+            AcceptedConnections => 'accepted',
+            Requests            => 'requests',
+        },
+    });
+
+
+=head1 DESCRIPTION
+
+Hatena::Mackerel::Worker is TheSchwartz worker for retriving several server statistics.
+Hatena::Mackerel::Worker
+    - has many plugins such as Nginx, MySQL, SNMP, Redis, and so on.
+    - stores statistics values into RRD.
+
+=head1 AUTHOR
+
+Yuuki Tsubouchi E<lt>yuuki@cpan.orgE<gt>
+
+=head1 SEE ALSO
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
+
+1;
+__END__
+
 
 =head1 NAME
 
