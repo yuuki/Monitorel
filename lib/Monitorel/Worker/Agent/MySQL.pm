@@ -1,4 +1,4 @@
-package Monitorel::Worker::Agent::MySQLStat;
+package Monitorel::Worker::Agent::MySQL;
 use strict;
 use warnings;
 use parent qw(Monitorel::Worker);

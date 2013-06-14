@@ -7,7 +7,7 @@ use Test::More;
 use Test::Mock::Guard qw(mock_guard);
 use Test::Fatal;
 
-use Monitorel::Worker::Agent::SnmpTarget;
+use Monitorel::Worker::Agent::SNMP;
 
 
 subtest proc => sub {
@@ -75,7 +75,7 @@ subtest proc => sub {
                 close       => sub {},
             };
 
-        my $result = Monitorel::Worker::Agent::SnmpTarget->proc({
+        my $result = Monitorel::Worker::Agent::SNMP->proc({
             host      => 'localhost',
             stats     => $oids,
             community => 'public',
@@ -91,7 +91,7 @@ subtest proc => sub {
 
     subtest "invalid host" => sub {
         like exception {
-            Monitorel::Worker::Agent::SnmpTarget->proc({
+            Monitorel::Worker::Agent::SNMP->proc({
                 host      => 'ddd.hhh',
                 stats     => $oids,
                 community => 'public',
@@ -101,7 +101,7 @@ subtest proc => sub {
 
     subtest "invalid oid" => sub {
         like exception {
-            Monitorel::Worker::Agent::SnmpTarget->proc({
+            Monitorel::Worker::Agent::SNMP->proc({
                 host      => 'localhost',
                 stats     => [".1111.1111.1111.11"],
                 community => 'public',

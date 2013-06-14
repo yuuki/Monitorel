@@ -1,4 +1,4 @@
-package Monitorel::Worker::Agent::MemcachedStat;
+package Monitorel::Worker::Agent::Memcached;
 use strict;
 use warnings;
 use parent qw(Monitorel::Worker);

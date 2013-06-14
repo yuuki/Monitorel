@@ -6,7 +6,7 @@ use lib lib => 't/lib';
 use Test::More;
 use Test::Mock::Guard qw(mock_guard);
 
-use Monitorel::Worker::Agent::MemcachedStat;
+use Monitorel::Worker::Agent::Memcached;
 
 subtest proc => sub {
 
@@ -93,7 +93,7 @@ EOS
             close => sub {},
         };
 
-    my $result = Monitorel::Worker::Agent::MemcachedStat->proc(+{
+    my $result = Monitorel::Worker::Agent::Memcached->proc(+{
         host  => 'localhost',
         stats => $stats,
     });

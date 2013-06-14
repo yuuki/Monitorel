@@ -6,7 +6,7 @@ use lib lib => 't/lib';
 use Test::More;
 use Test::Mock::Guard qw(mock_guard);
 
-use Monitorel::Worker::Agent::MySQLStat;
+use Monitorel::Worker::Agent::MySQL;
 
 
 subtest proc => sub {
@@ -49,7 +49,7 @@ subtest proc => sub {
             },
         };
 
-    my $result = Monitorel::Worker::Agent::MySQLStat->proc(
+    my $result = Monitorel::Worker::Agent::MySQL->proc(
         +{
             stats  => [ qw(Bytes_received Com_update) ],
             host   => 'localhost',

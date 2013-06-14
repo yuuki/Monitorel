@@ -1,4 +1,4 @@
-package Monitorel::Worker::Agent::SnmpTarget;
+package Monitorel::Worker::Agent::SNMP;
 use strict;
 use warnings;
 use parent qw(Monitorel::Worker);

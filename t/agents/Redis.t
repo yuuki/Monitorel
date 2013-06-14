@@ -6,7 +6,7 @@ use lib lib => 't/lib';
 use Test::More;
 use Test::Mock::Guard qw(mock_guard);
 
-use Monitorel::Worker::Agent::RedisStat;
+use Monitorel::Worker::Agent::Redis;
 
 subtest proc => sub {
 
@@ -90,7 +90,7 @@ EOS
             close => sub {},
         };
 
-    my $result = Monitorel::Worker::Agent::RedisStat->proc( +{
+    my $result = Monitorel::Worker::Agent::Redis->proc( +{
         host => 'localhost',
         stats => $stats,
     });

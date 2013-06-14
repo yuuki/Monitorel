@@ -1,4 +1,4 @@
-package Monitorel::Worker::Agent::RedisStat;
+package Monitorel::Worker::Agent::Redis;
 use strict;
 use warnings;
 
