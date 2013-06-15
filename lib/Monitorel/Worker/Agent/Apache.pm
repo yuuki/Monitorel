@@ -7,52 +7,66 @@ use parent qw(Monitorel::Worker);
 use Carp qw(croak);
 use LWP::UserAgent;
 
-our $PORT  = '8081';
-our $PATH  = 'server-status';
-our $QUERY = 'auto';
+use constant {
+    PORT  => '8081',
+    PATH  => 'server-status',
+    QUERY => 'auto',
+    STAT_NAMES => [qw(
+        TotalAccesses
+        TotalkBytes
+        CPULoad
+        Uptime
+        BusyWorkers
+        IdleWorkers
+        TotalWorkers
+    )],
+};
 
-our $STAT_NAMES = [qw(
-    TotalAccesses
-    TotalkBytes
-    CPULoad
-    Uptime
-    BusyWorkers
-    IdleWorkers
-    TotalWorkers
-)];
 
 sub proc {
     my ($class, $args) = @_;
 
-    my $hostname = $args->{host} // croak "host key must not be empty";
-    my $stats    = $args->{stats} || $STAT_NAMES;
-
-    my $all_stat_to_value = _apache_stat_to_value($hostname);
-    +{ map { $_ => $all_stat_to_value->{$_} } @$stats };
-}
-
-sub _apache_stat_to_value {
-    my $hostname = shift;
+    my $hostname = $args->{host}
+        || croak "host required";
+    my $stats = $args->{stats} || STAT_NAMES;
 
     my $response = _apache_response($hostname)
         || croak "no response";
 
     my $lines = [ split("\n", $response) ];
-    my $kv = {};
-    for (@$lines) {
-        chomp;
-        my ($k, $v) = _line_to_stat_to_value($_);
-        $kv->{$k} = $v;
+    my $all_stat_to_value = {};
+    for my $line (@$lines) {
+        chomp $line;
+
+        my ($stat, $value) = split(/: /, $line);
+        if ($stat eq 'Total Accesses') {
+            $stat = STAT_NAMES->[0];
+        }
+        elsif ($stat eq 'Total kBytes') {
+            $stat = STAT_NAMES->[1];
+        }
+        elsif ($stat eq 'BusyServers') {
+            $stat = STAT_NAMES->[4];
+        }
+        elsif ($stat eq 'IdleServers') {
+            $stat = STAT_NAMES->[5];
+        }
+        elsif ($stat eq 'Scoreboard') {
+            $stat  = STAT_NAMES->[6];
+            $value = length $value;
+        }
+        $all_stat_to_value->{$stat} = $value;
     };
 
-    $kv;
+    return +{ map { $_ => $all_stat_to_value->{$_} } @$stats };
 }
 
 sub _apache_response {
     my $hostname = shift;
 
-    my $uri = "http://$hostname:$PORT/$PATH?$QUERY";
-    my $uri_on_timeout = "http://$hostname/$PATH?$QUERY";
+    my ($port, $path, $query) = (PORT, PATH, QUERY);
+    my $uri = "http://$hostname:$port/$path?$query";
+    my $uri_on_timeout = "http://$hostname/$path?$query";
 
     my $ua = LWP::UserAgent->new;
     $ua->timeout(10);
@@ -62,30 +76,7 @@ sub _apache_response {
     }
     $response->is_error
         and croak sprintf "Apache Error: %s: %d", $response->request->uri, $response->code;
-    $response->content;
-}
-
-sub _line_to_stat_to_value {
-    my $line = shift;
-
-    my ($stat, $value) = split(/: /, $line);
-    if ($stat eq 'Total Accesses') {
-        $stat = $STAT_NAMES->[0];
-    }
-    elsif ($stat eq 'Total kBytes') {
-        $stat = $STAT_NAMES->[1];
-    }
-    elsif ($stat eq 'BusyServers') {
-        $stat = $STAT_NAMES->[4];
-    }
-    elsif ($stat eq 'IdleServers') {
-        $stat = $STAT_NAMES->[5];
-    }
-    elsif ($stat eq 'Scoreboard') {
-        $stat  = $STAT_NAMES->[6];
-        $value = length $value;
-    }
-    ($stat, $value);
+    return $response->content;
 }
 
 1;

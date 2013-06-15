@@ -10,18 +10,7 @@ use Test::Mock::LWP::Conditional;
 use Monitorel::Worker::Agent::Apache;
 
 
-our $STAT_NAMES = [qw(
-    TotalAccesses
-    TotalkBytes
-    CPULoad
-    Uptime
-    BusyWorkers
-    IdleWorkers
-    TotalWorkers
-)];
-
-
-subtest 'proc' => sub {
+subtest proc => sub {
 
     my $apache_response = <<'EOS';
 Total Accesses: 6407
