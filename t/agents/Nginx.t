@@ -9,7 +9,7 @@ use Test::Mock::LWP::Conditional;
 
 use Monitorel::Worker::Agent::Nginx;
 
-my $STAT_NAMES = $Monitorel::Worker::Agent::Nginx::STAT_NAMES;
+my $STAT_NAMES = Monitorel::Worker::Agent::Nginx->STAT_NAMES;
 
 subtest proc => sub {
 
