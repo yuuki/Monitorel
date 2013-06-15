@@ -6,47 +6,58 @@ use parent 'Monitorel::Worker';
 use Carp qw(croak);
 use LWP::UserAgent;
 
-our $PORT = '8000';
-our $PATH = 'server/status';
-
-our $STAT_NAMES = [qw(
-    Uptime
-    TotalAccesses
-    BusyWorkers
-    IdleWorkers
-)];
+use constant {
+    PORT => '8000',
+    PATH => 'server/status',
+    STAT_NAMES => [qw(
+        Uptime
+        TotalAccesses
+        BusyWorkers
+        IdleWorkers
+    )],
+};
 
 sub proc {
     my ($class, $args) = @_;
 
-    my $hostname = $args->{host}  // croak 'host key must not be empty';
-    my $stats    = $args->{stats};
+    my $hostname = $args->{host} or croak 'host required';
+    my $stats    = $args->{stats} || STAT_NAMES;
 
-    my $all_stat_to_value = _plack_stat_to_value($hostname);
-    +{ map { $_ => $all_stat_to_value->{$_} } @$stats };
-}
-
-sub _plack_stat_to_value {
-    my $hostname = shift;
-
-    my $response = _plack_response($hostname) || croak "no response";
+    my $response = plack_response($hostname)
+        or croak "no response";
 
     my $lines = [ split("\n", $response) ];
-    my $kv = {};
-    for (@$lines) {
-        chomp;
-        my ($k, $v) = _line_to_stat_to_value($_);
-        next unless $k;
-        $kv->{$k} = $v;
+    my $stat_to_value = {};
+    for my $line (@$lines) {
+        chomp $line;
+        my ($stat, $value) = split(/: /, $line);
+        next unless $stat;
+
+        if ($stat eq 'Uptime') {
+            $stat = STAT_NAMES->[0];
+            $value = [split(/ /, $value)]->[0];
+        }
+        elsif ($stat eq 'Total Accesses') {
+            $stat = STAT_NAMES->[1];
+        }
+        elsif ($stat eq 'BusyWorkers') {
+            $stat = STAT_NAMES->[2];
+        }
+        elsif ($stat eq 'IdleWorkers') {
+            $stat = STAT_NAMES->[3];
+        }
+
+        $stat_to_value->{$stat} = $value;
     }
 
-    $kv;
+    return +{ map { $_ => $stat_to_value->{$_} } @$stats };
 }
 
-sub _plack_response {
+sub plack_response {
     my $hostname = shift;
 
-    my $uri = "http://$hostname:$PORT/$PATH";
+    my ($port, $path) = (PORT, PATH);
+    my $uri = "http://$hostname:$port/$path";
 
     my $ua = LWP::UserAgent->new;
     $ua->timeout(10);
@@ -55,28 +66,6 @@ sub _plack_response {
         and croak sprintf "Plack Error: %s: %d", $response->request->uri, $response->code;
     $response->content;
 }
-
-sub _line_to_stat_to_value {
-    my $line = shift;
-
-    my ($stat, $value) = split(/: /, $line);
-    return () unless $stat;
-    if ($stat eq 'Uptime') {
-        $stat = $STAT_NAMES->[0];
-        $value = [split(/ /, $value)]->[0];
-    }
-    elsif ($stat eq 'Total Accesses') {
-        $stat = $STAT_NAMES->[1];
-    }
-    elsif ($stat eq 'BusyWorkers') {
-        $stat = $STAT_NAMES->[2];
-    }
-    elsif ($stat eq 'IdleWorkers') {
-        $stat = $STAT_NAMES->[3];
-    }
-    return ($stat, $value);
-}
-
 
 1;
 __END__
