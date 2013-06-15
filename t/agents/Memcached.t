@@ -21,7 +21,7 @@ subtest proc => sub {
         get_misses
         curr_connections
         evictions
-        ) ];
+    ) ];
 
     my $memcached_response = <<'EOS';
 STAT        accepting_conns     1
