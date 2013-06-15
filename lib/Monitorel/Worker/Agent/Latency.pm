@@ -12,15 +12,15 @@ use Time::HiRes;
 sub proc {
     my ($class, $args) = @_;
 
-    $args->{url} // croak "url key must not be empty";
+    $args->{url} or croak "url required";
     my $uri = URI->new($args->{url});
     return if $uri->scheme ne 'http';
 
-    my $usec = _latency_by_url($uri->as_string);
+    my $usec = latency_by_url($uri->as_string);
     my $url_to_usec = +{ $args->{url} => $usec };
 }
 
-sub _latency_by_url {
+sub latency_by_url {
     my $url = shift;
 
     my $ua = LWP::UserAgent->new;

@@ -30,7 +30,7 @@ sub proc {
         || croak "host required";
     my $stats = $args->{stats} || STAT_NAMES;
 
-    my $response = _apache_response($hostname)
+    my $response = apache_response($hostname)
         || croak "no response";
 
     my $lines = [ split("\n", $response) ];
@@ -61,7 +61,7 @@ sub proc {
     return +{ map { $_ => $all_stat_to_value->{$_} } @$stats };
 }
 
-sub _apache_response {
+sub apache_response {
     my $hostname = shift;
 
     my ($port, $path, $query) = (PORT, PATH, QUERY);
