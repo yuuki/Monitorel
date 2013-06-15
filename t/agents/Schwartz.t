@@ -3,26 +3,39 @@ use strict;
 use warnings;
 use lib lib => 't/lib';
 
-use Test::More skip_all => "require Test::mysqld";
+use Test::More skip_all => "ops";
+use Test::mysqld;
+
 use DBI;
 use TheSchwartz::Simple;
 use Path::Class;
 
 use Monitorel::Worker::Agent::Schwartz;
 
+my $mysqld = Test::mysqld->new(
+    my_cnf => {
+        'skip-networking' => '', # no TCP socket
+    }
+) or plan skip_all => $Test::mysqld::errstr;
 
+open my $fh, "< db/schema_theschwartz.sql";
+my $schema = do { local $/ = undef; <$fh> };
+close $fh;
 
-my ($host, $port) = ('localhost', 3306);
-my $dbuser = config('db.mackerel')->{user};
-my $dbpass = config('db.mackerel')->{passwd};
-my $dbh = DBI->connect("DBI:mysql:theschwartz:$host:$port", $dbuser, $dbpass);
+my $dsn = $mysqld->dsn(dbname => '');
+my $dbname = 'test_theschwartz_worker';
+my $dbh = DBI->connect($dsn, 'root', '');
+$dbh->do("CREATE DATABASE $dbname");
+$dbh->do("use $dbname");
+$dbh->do($_) for split /;\s*/, $schema;
 
+$dsn = $mysqld->dsn(dbname => $dbname);
 
 subtest proc => sub {
-    my $stats = ["Hatena-Bookmark-Worker", "Hatena-Dirary-Worker", "Hatena-Ugomemo-Worker"];
+    my $stats = ["Worker1", "Worker2", "Worker3"];
 
     {
-        my $client = TheSchwartz::Simple->new([$dbh]);
+        my $client = TheSchwartz::Simple->new([$dsn]);
         $client->insert($stats->[0], 10);
         $client->insert($stats->[0], 11);
         $client->insert($stats->[0], 12);
@@ -31,19 +44,19 @@ subtest proc => sub {
     }
 
     my $result = Monitorel::Worker::Agent::Schwartz->proc({
-        host     => $host,
-        dbuser   => $dbuser,
-        dbpass   => $dbpass,
-        port     => $port,
+        dsn      => $dsn,
+        dbuser   => 'root',
+        dbpass   => '',
     });
 
     is $result->{$stats->[0]}, 3;
     is $result->{$stats->[1]}, 1;
     is $result->{$stats->[2]}, 1;
 
-    my $tables = $dbh->table_info('', '', '%', 'TABLE')->fetchall_arrayref({});
-    $dbh->do("TRUNCATE `$_`") for map { $_->{TABLE_NAME} } @$tables;
-    $dbh->disconnect;
 };
+
+my $tables = $dbh->table_info('', '', '%', 'TABLE')->fetchall_arrayref({});
+$dbh->do("TRUNCATE `$_`") for map { $_->{TABLE_NAME} } @$tables;
+$dbh->disconnect;
 
 done_testing;

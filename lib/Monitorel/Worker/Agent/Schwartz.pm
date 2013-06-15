@@ -7,22 +7,17 @@ use parent qw(Monitorel::Worker);
 use DBI;
 use Carp qw(croak);
 
-use constant MYSQL_DEFAULT_PORT => 3306;
+use constant DEFAULT_PORT => 3306;
 
 sub proc {
     my ($class, $args) = @_;
 
-    $args->{port}     ||= MYSQL_DEFAULT_PORT;
-    $args->{dbuser}   ||= 'readonly';
-    $args->{dbpass}   ||= 'readonly';
-    $args->{dsn}    = _search_schwartz_datasource($args);
-    _schwartz_stat_to_value($args);
-}
+    my $dsn    = $args->{dsn} or croak "dsn requried";
+    my $dbuser = $args->{dbuser} || 'nobody';
+    my $dbpass = defined $args->{dbpass} ? $args->{dbpass} : "nobody";
 
-sub _schwartz_stat_to_value {
-    my ($args) = @_;
-
-    my $response = _schwartz_response($args) || croak "no response";
+    my $response = schwartz_response($dsn, $dbuser, $dbpass)
+        or croak "no response";
 
     my $stat_to_value = {};
     for my $row (@$response) {
@@ -30,31 +25,20 @@ sub _schwartz_stat_to_value {
         $funcname =~ s/::/-/g;
         $stat_to_value->{$funcname} = $count;
     }
-    $stat_to_value;
+    return $stat_to_value;
 }
 
-sub _search_schwartz_datasource {
-    my ($args)  = @_;
-    my $dsn = (grep {/theschwartz$/} DBI->data_sources('mysql', {
-        host        => $args->{host},
-        port        => $args->{port},
-        user        => $args->{dbuser},
-        password    => $args->{dbpass},
-    }))[0];
-    $dsn    = join(':', $dsn, $args->{host}, $args->{port});
-}
+sub schwartz_response {
+    my ($dsn, $dbuser, $dbpass) = @_;
 
-sub _schwartz_response {
-    my ($args)  = @_;
-
-    my $response    = {};
+    my $response = {};
 
     local $SIG{ALRM} = sub { croak "Schwartz timeout" };
     alarm 10;
 
     my $dbh = DBI->connect(
-        $args->{dsn}, $args->{dbuser}, $args->{dbpass},{ RaiseError => 1 }
-    ) || croak $DBI::err;
+        $dsn, $dbuser, $dbpass, { RaiseError => 1 }
+    ) or croak $DBI::err;
     my $sth = $dbh->prepare('
         SELECT
             funcname,
@@ -63,14 +47,15 @@ sub _schwartz_response {
         LEFT JOIN job
             ON funcmap.funcid = job.funcid
         GROUP BY funcmap.funcid
-    ') || croak "invalid sql";
+    ') or croak "invalid sql";
     $sth->execute;
     $response = $sth->fetchall_arrayref;
     $sth->finish;
+
     $dbh->disconnect;
 
     alarm 0;
-    $response;
+    return $response;
 }
 
 1;
