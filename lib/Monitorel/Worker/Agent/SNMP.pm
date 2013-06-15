@@ -12,15 +12,9 @@ use File::Which qw(which);
 sub proc {
     my ($class, $args) = @_;
 
-    my $hostname    = $args->{host}  // croak "host key must not be empty";
-    my $oids        = $args->{stats} // croak "stats key must not be empty";
-    my $community   = $args->{community} || 'public';
-
-    _snmp_response($hostname, $community, $oids);
-}
-
-sub _snmp_response {
-    my ($hostname, $community, $mibs) = @_;
+    my $hostname  = $args->{host}  or croak "host requried";
+    my $oids      = $args->{stats} or croak "stats requried";
+    my $community = $args->{community} || 'public';
 
     my ($session, $error) = Net::SNMP->session(
         -hostname  => $hostname,
@@ -29,15 +23,15 @@ sub _snmp_response {
         -timeout   => 10,
         -translate => 0x0,  # sysUpTime becomes not human readble string but numeric value
     );
-    $session // croak "SNMP error: $error";
+    $session or croak "SNMP error: $error";
 
     my $response = $session->get_request(
-        -varbindlist => $mibs,
-    ) || croak "SNMP error: $session->error";
+        -varbindlist => $oids,
+    ) or croak "SNMP error: $session->error";
 
     $session->close;
 
-    $response;
+    return $response;
 }
 
 1;
