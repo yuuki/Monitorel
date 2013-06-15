@@ -12,8 +12,8 @@ use constant DEFAULT_PORT => 3306;
 sub proc {
     my ($class, $args) = @_;
 
-    my $stats = $args->{stats} || croak "stats required";
-    $args->{host}   || croak "host required";
+    my $stats = $args->{stats} or croak "stats required";
+    $args->{host}   or croak "host required";
     $args->{port}   ||= DEFAULT_PORT;
     $args->{dbuser} ||= 'nobody';
     $args->{dbpass} ||= 'nobody';

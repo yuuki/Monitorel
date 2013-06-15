@@ -14,8 +14,8 @@ use constant {
 sub proc {
     my ($class, $args) = @_;
 
-    my $hostname = $args->{host}  || croak "host requried";
-    my $services = $args->{stats} || croak "stats required";
+    my $hostname = $args->{host}  or croak "host requried";
+    my $services = $args->{stats} or croak "stats required";
     my $port     = $args->{port}  || DEFAULT_PORT;
 
     my $sock = IO::Socket::INET->new(

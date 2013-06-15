@@ -27,7 +27,7 @@ sub proc {
     my ($class, $args) = @_;
 
     my $hostname = $args->{host}
-        || croak "host required";
+        or croak "host required";
     my $stats = $args->{stats} || STAT_NAMES;
 
     my $response = apache_response($hostname)
