@@ -7,34 +7,25 @@ use Carp qw(croak);
 use DBI;
 use IO::File;
 
-use constant MYSQL_DEFAULT_PORT => 3306;
+use constant DEFAULT_PORT => 3306;
 
 sub proc {
     my ($class, $args) = @_;
 
-    my $stats = $args->{stats} // croak "stats key must not be empty";
-    $args->{host}   // croak "host key must not be empty";
-    $args->{port}   ||= MYSQL_DEFAULT_PORT;
-    $args->{dbuser} ||= 'nagios';
-    $args->{dbpass} ||= 'nagios';
+    my $stats = $args->{stats} || croak "stats required";
+    $args->{host}   || croak "host required";
+    $args->{port}   ||= DEFAULT_PORT;
+    $args->{dbuser} ||= 'nobody';
+    $args->{dbpass} ||= 'nobody';
 
-    my $values = _mysql_stat_to_value($args);
-    my $all_stat_to_value = +{ map { $_->[0], $_->[1] } @$values };
-    +{ map { $_ => $all_stat_to_value->{$_} } @$stats };
-}
-
-sub _mysql_stat_to_value {
-    my ($args) = @_;
-
-    my $dsn .= ";host=$args->{host}";
-       $dsn .= ";port=$args->{port}";
+    my $dsn = "dbi:mysql:host=$args->{host};port=$args->{port}";
 
     my $values;
     {
         local $SIG{ALRM} = sub { die "Timeout. 10 sec\n" };
         alarm 10;
 
-        my $dbh = DBI->connect("dbi:mysql:$dsn",
+        my $dbh = DBI->connect($dsn,
                                $args->{dbuser},
                                $args->{dbpass},
                                {
@@ -58,7 +49,9 @@ sub _mysql_stat_to_value {
         alarm 0;
     }
 
-    $values;
+    my $all_stat_to_value = +{ map { $_->[0], $_->[1] } @$values };
+
+    return +{ map { $_ => $all_stat_to_value->{$_} } @$stats };
 }
 
 1;
