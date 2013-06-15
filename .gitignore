@@ -6,4 +6,9 @@
 /nytprof.out
 /nytprof/
 /Build
+/tmp/*
 
+/rrd/*
+config/development.pl
+config/test.pl
+config/deployment.pl

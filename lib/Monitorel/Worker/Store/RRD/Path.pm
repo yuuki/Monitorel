@@ -6,8 +6,8 @@ use Cwd qw(getcwd);
 use Carp qw(croak);
 use Clone qw(clone);
 use Path::Class qw(dir);
-use Exporter::Lite;
 
+use Exporter::Lite;
 our @EXPORT_OK = qw(get get_relative_path get_absolute_path);
 
 

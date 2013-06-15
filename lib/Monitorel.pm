@@ -19,14 +19,14 @@ Monitorel - Generate graph for server statistics
     use Monitorel::Worker::Agent::Nginx;
 
     my $rrd_dir = 'path/to/rrdfile_dir';
-    Hatena::Mackerel::Worker::Store::RRD::Path->set_rrddir($rrd_dir);
+    Monitorel::Worker::Store::RRD::Path->set_rrddir($rrd_dir);
 
     my $client = TheSchwartz->new(
         databases => [{ dsn => $dsn, user => $user, passwd => $passwd }],
         verbose   => 1,
     );
 
-    my $job_id = $client->insert('Hatena::Mackerel::Worker::Agent::Nginx', {
+    my $job_id = $client->insert('Monitorel::Worker::Agent::Nginx', {
         fqdn  => 'localhost',
         stats => [qw(ActiveConnections AcceptedConnections Requests)],
         tag   => 'nginx',   # Option
@@ -45,8 +45,8 @@ Monitorel - Generate graph for server statistics
 
 =head1 DESCRIPTION
 
-Hatena::Mackerel::Worker is TheSchwartz worker for retriving several server statistics.
-Hatena::Mackerel::Worker
+Monitorel::Worker is TheSchwartz worker for retriving several server statistics.
+Monitorel::Worker
     - has many plugins such as Nginx, MySQL, SNMP, Redis, and so on.
     - stores statistics values into RRD.
 

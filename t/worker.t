@@ -11,6 +11,7 @@ use DBI;
 use TheSchwartz;
 use RRDTool::Rawish;
 
+use Monitorel::Config;
 use Monitorel::Worker::Store::RRD::Path;
 
 
@@ -38,7 +39,7 @@ subtest 'worker normal test' => sub {
         verbose   => 1,
     );
 
-    my $rrd_dir = getcwd . '/tmp';
+    my $rrd_dir = Monitorel::Config->param('rrd_dir');
     Monitorel::Worker::Store::RRD::Path->set_rrddir($rrd_dir);
 
     my $job_id = $client->insert('Worker::Test', {

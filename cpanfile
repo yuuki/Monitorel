@@ -1,5 +1,6 @@
 
 requires 'Clone';
+requires 'Config::ENV', 0.12;
 requires 'DBI', 1.627;
 requires 'Exporter::Lite';
 requires 'LWP::UserAgent', 6.05;
