@@ -29,7 +29,6 @@ sub get_relative_path {
 
     my $args      = clone $path_args;
     my $file_path = dir(shift @$args);
-
     $file_path    = $file_path->file(join('___', @$args) . '.rrd');
     return $file_path;
 }

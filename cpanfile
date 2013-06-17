@@ -3,11 +3,14 @@ requires 'Clone';
 requires 'Config::ENV', 0.12;
 requires 'DBI', 1.627;
 requires 'Exporter::Lite';
+requires 'JSON::XS';
 requires 'LWP::UserAgent', 6.05;
+requires 'Module::Load';
 requires 'Net::SNMP', '6.0.1';
 requires 'Net::Telnet';
 requires 'Path::Class';
 requires 'RRDTool::Rawish', 0.031;
+requires 'Qudo', 0.0213;
 requires 'Time::HiRes';
 requires 'TheSchwartz', 1.10;
 

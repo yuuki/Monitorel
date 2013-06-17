@@ -74,7 +74,7 @@ sub create {
 }
 
 sub update {
-    my ($self, $stat, $time, $value) = @_;
+    my ($self, $time, $value) = @_;
 
     try {
         $self->{rrd}->update([join(':', $time, $value)]);
