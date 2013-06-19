@@ -1,8 +1,10 @@
 package Monitorel;
 use strict;
 use warnings;
+use parent qw(Amon2);
 use 5.008005;
 our $VERSION = "0.01";
+
 
 1;
 __END__
