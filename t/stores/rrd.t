@@ -1,9 +1,5 @@
-use utf8;
-use strict;
-use warnings;
-use lib 'lib' => 't/lib';
+use t::monitoreltest;
 
-use Test::More;
 use Cwd qw(getcwd);
 
 use Monitorel::Worker::Store::RRD;
@@ -34,6 +30,3 @@ subtest create_and_update => sub {
 
     `rm -fr tmp/*`;
 };
-
-
-done_testing;

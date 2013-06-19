@@ -2,15 +2,13 @@ package Monitorel::Worker::Store::RRD;
 use utf8;
 use strict;
 use warnings;
+use parent qw(Monitorel::Worker::Store);
 
 use Carp qw(croak);
 use RRDTool::Rawish;
 use Try::Tiny;
 
-use parent qw(Monitorel::Worker::Store);
-
 use Monitorel::Worker::Store::RRD::Path qw(get_absolute_path get_relative_path);
-
 
 sub new {
     my ($class, $args, $stat) = @_;
@@ -74,7 +72,7 @@ sub create {
 }
 
 sub update {
-    my ($self, $stat, $time, $value) = @_;
+    my ($self, $time, $value) = @_;
 
     try {
         $self->{rrd}->update([join(':', $time, $value)]);

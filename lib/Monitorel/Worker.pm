@@ -1,37 +1,29 @@
 package Monitorel::Worker;
 use strict;
 use warnings;
-use parent qw(TheSchwartz::Worker);
 
-use Try::Tiny;
+use Carp qw(croak);
+use Module::Load qw(load);
 
 use Monitorel::Worker::Store::RRD;
 
 
-sub max_retries { 1 }
+sub fetch_and_store_stat {
+    my ($class, $args) = @_;
 
-sub proc {
-    die 'should be implemented by subclass';
-}
+    my $agent = $args->{agent} or croak 'agent required';
+    $args->{host} ||= $args->{fqdn} or croak 'fqdn required';
 
-sub work {
-    my $class = shift;
-    my $job   = shift;
+    my $agent_class = "Monitorel::Worker::Agent::$agent";
+    load $agent_class;
 
-    my $stat_to_value;
-    try {
-        $job->arg->{host} ||= $job->arg->{fqdn};
-        $stat_to_value = $class->proc($job->arg);
-    } catch {
-        return $job->failed($_, 1);
-    };
+    my $stat_to_value = $agent_class->proc($args);
 
     for my $stat (keys %$stat_to_value) {
-        my $rrd = Monitorel::Worker::Store::RRD->new($job->arg, $stat);
+        my $rrd = Monitorel::Worker::Store::RRD->new($args, $stat);
         $rrd->create;
         $rrd->update(time, $stat_to_value->{$stat} || 0);
     }
-    return $job->completed;
 }
 
 1;

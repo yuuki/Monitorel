@@ -1,7 +1,4 @@
-use utf8;
-use strict;
-use warnings;
-use lib lib => 't/lib';
+use t::monitoreltest;
 
 use Test::More skip_all => "ops";
 use Test::mysqld;
@@ -58,5 +55,3 @@ subtest proc => sub {
 my $tables = $dbh->table_info('', '', '%', 'TABLE')->fetchall_arrayref({});
 $dbh->do("TRUNCATE `$_`") for map { $_->{TABLE_NAME} } @$tables;
 $dbh->disconnect;
-
-done_testing;

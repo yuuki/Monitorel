@@ -1,9 +1,5 @@
-use strict;
-use warnings;
-use lib lib => 't/lib';
-use feature qw(switch);
+use t::monitoreltest;
 
-use Test::More;
 use Test::Mock::Guard qw(mock_guard);
 
 use Monitorel::Worker::Agent::Munin;
@@ -21,12 +17,11 @@ subtest proc => sub {
             my $self = shift;
             return unless defined $self->{command};
 
-            given ($self->{command}) {
-                when (/^list/) {
-                    $_[0] = "cpu memory\n";
-                }
-                when (/^fetch cpu/) {
-                    $_[0] = <<'EOS';
+            if ($self->{command} =~ /^list/) {
+                $_[0] = "cpu memory\n";
+            }
+            elsif ($self->{command} =~ /^fetch cpu/) {
+                $_[0] = <<'EOS';
 user.value 2565520
 nice.value 8799098
 system.value 4536548
@@ -37,9 +32,9 @@ softirq.value 5501
 steal.value 334539
 .
 EOS
-                }
-                when (/^fetch memory/) {
-                    $_[0] = <<'EOS';
+            }
+            elsif ($self->{command} =~ /^fetch memory/) {
+                $_[0] = <<'EOS';
 slab.value 133419008
 swap_cache.value 0
 page_tables.value 6172672
@@ -55,7 +50,6 @@ active.value 869703680
 inactive.value 618102784
 .
 EOS
-                }
             }
         },
         close => sub {},
@@ -91,6 +85,3 @@ EOS
     is $result->{memory}->{active_value}, 869703680;
     is $result->{memory}->{inactive_value}, 618102784;
 };
-
-done_testing;
-__END__

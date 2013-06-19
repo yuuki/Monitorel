@@ -1,9 +1,5 @@
-use utf8;
-use strict;
-use warnings;
-use lib lib => 't/lib';
+use t::monitoreltest;
 
-use Test::More;
 use Test::Mock::Guard qw(mock_guard);
 
 use Monitorel::Worker::Agent::Memcached;
@@ -114,6 +110,3 @@ EOS
     is $result->{evictions},        0;
 
 };
-
-done_testing;
-__END__

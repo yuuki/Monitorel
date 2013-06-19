@@ -1,9 +1,5 @@
-use utf8;
-use strict;
-use warnings;
-use lib lib => 't/lib';
+use t::monitoreltest;
 
-use Test::More;
 use Test::Mock::Guard qw(mock_guard);
 
 use Monitorel::Worker::Agent::MySQL;
@@ -61,5 +57,3 @@ subtest proc => sub {
     is $result->{Bytes_received}, 1;
     is $result->{Com_update}, 5;
 };
-
-done_testing;

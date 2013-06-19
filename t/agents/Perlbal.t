@@ -1,13 +1,8 @@
-use strict;
-use warnings;
-use lib lib => 't/lib';
-use feature qw(switch);
+use t::monitoreltest;
 
-use Test::More;
 use Test::Mock::Guard qw(mock_guard);
 
 use Monitorel::Worker::Agent::Perlbal;
-
 
 subtest proc => sub {
 
@@ -55,10 +50,14 @@ subtest proc => sub {
             new => sub { bless {}, shift; },
             cmd => sub {
                 my ($self, %args) = @_;
-                given ($args{String}) {
-                    when (/fd/    ) { return @$fd     }
-                    when (/proc/  ) { return @$proc   }
-                    when (/uptime/) { return @$uptime }
+                if ($args{String} eq 'fd') {
+                    return @$fd;
+                }
+                elsif ($args{String} eq 'proc') {
+                    return @$proc;
+                }
+                elsif ($args{String} eq 'uptime') {
+                    return @$uptime;
                 }
             },
             close => sub {},
@@ -81,6 +80,3 @@ subtest proc => sub {
     is $result->{CurFd}, 0;
     is $result->{MaxFd}, -1;
 };
-
-done_testing;
-__END__
