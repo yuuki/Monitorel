@@ -1,11 +1,7 @@
-use utf8;
-use strict;
-use warnings;
-use lib lib => 't/lib';
+use t::monitoreltest;
 
-use Test::More;
-use Test::Mock::Guard qw(mock_guard);
 use Test::Fatal;
+use Test::Mock::Guard qw(mock_guard);
 
 use Monitorel::Worker::Agent::SNMP;
 
@@ -109,6 +105,3 @@ subtest proc => sub {
         }, qr(SNMP error);
     };
 };
-
-done_testing;
-__END__

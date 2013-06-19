@@ -1,13 +1,8 @@
-use utf8;
-use strict;
-use warnings;
-use lib lib => 't/lib';
+use t::monitoreltest;
 
-use Test::More;
 use Test::Mock::LWP::Conditional;
 
 use Monitorel::Worker::Agent::Plack;
-
 
 subtest proc => sub {
 
@@ -53,5 +48,3 @@ EOS
         Test::Mock::LWP::Conditional->reset_all;
     };
 };
-
-done_testing;

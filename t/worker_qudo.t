@@ -1,9 +1,5 @@
-use utf8;
-use strict;
-use warnings;
-use lib 'lib' => 't/lib';
+use t::monitoreltest;
 
-use Test::More;
 use Test::mysqld;
 
 use Cwd qw(getcwd);
@@ -22,9 +18,11 @@ my $mysqld = Test::mysqld->new(
     }
 ) or plan skip_all => $Test::mysqld::errstr;
 
+my $dbname = Monitorel::Config->param('TheSchwartz')->{dbname};
+my $user   = Monitorel::Config->param('TheSchwartz')->{user};
+my $passwd = Monitorel::Config->param('TheSchwartz')->{passwd};
 
 my $dsn = $mysqld->dsn(dbname => '');
-my $dbname = 'test_qudo';
 my $dbh = DBI->connect($dsn, 'root', '');
 $dbh->do("CREATE DATABASE $dbname");
 $dbh->do("use $dbname");
@@ -40,7 +38,7 @@ Monitorel::Worker::Store::RRD::Path->set_rrddir($rrd_dir);
 subtest 'qudo' => sub {
     my $client = Qudo->new(
         databases => [
-            { dsn => $mysqld->dsn(dbname => $dbname), user => 'root', passwd => ''}
+            { dsn => $mysqld->dsn(dbname => $dbname), user => $user, passwd => $passwd }
         ],
         default_hooks => [qw(Qudo::Hook::Serialize::JSON)],
     );
@@ -68,5 +66,3 @@ subtest 'qudo' => sub {
 
     `rm -fr $rrd_dir/localhost`;
 };
-
-done_testing;

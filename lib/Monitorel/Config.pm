@@ -12,15 +12,35 @@ common +{
     rrd_dir => root->subdir('rrd')->stringify,
 };
 
-config production  => {
+config production  => +{
     eval { load root->file('config/deployment.pl')->stringify }
 };
 
-config development => {
+config development => +{
+    TheSchwartz => {
+        dbname => 'theschwartz',
+        user => '',
+        passwd => '',
+    },
+    Qudo => {
+        dbname => 'qudo',
+        default_hooks => ['Qudo::Hook::Serialize::JSON'],
+        work_delay    => 5,
+    },
     eval { load root->file('config/development.pl')->stringify }
 };
 
-config test        => {
+config test        => +{
+    TheSchwartz => {
+        dbname => 'test_theschwartz',
+        user => '',
+        passwd => '',
+    },
+    Qudo => {
+        dbname => 'test_qudo',
+        default_hooks => ['Qudo::Hook::Serialize::JSON'],
+        work_delay    => 5,
+    },
     eval { load root->file('config/test.pl')->stringify }
 };
 

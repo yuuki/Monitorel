@@ -1,9 +1,5 @@
-use utf8;
-use strict;
-use warnings;
-use lib 'lib' => 't/lib';
+use t::monitoreltest;
 
-use Test::More;
 use Test::Mock::Guard qw(mock_guard);
 
 use Monitorel::Config;
@@ -34,5 +30,3 @@ subtest 'fetch_and_store_stat' => sub {
     `rm -fr $rrd_dir/localhost`;
 
 };
-
-done_testing;

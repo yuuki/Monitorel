@@ -1,15 +1,10 @@
-use utf8;
-use strict;
-use warnings;
-use lib 'lib' => 't/lib';
+use t::monitoreltest;
 
-use Test::More;
 use Test::mysqld;
 
 use Cwd qw(getcwd);
 use DBI;
 use TheSchwartz;
-use RRDTool::Rawish;
 
 use Monitorel::Config;
 use Monitorel::Worker::TheSchwartz;
@@ -22,13 +17,15 @@ my $mysqld = Test::mysqld->new(
     }
 ) or plan skip_all => $Test::mysqld::errstr;
 
-
 open my $fh, "< db/schema_theschwartz.sql";
 my $schema = do { local $/ = undef; <$fh> };
 close $fh;
 
+my $dbname = Monitorel::Config->param('TheSchwartz')->{dbname};
+my $user   = Monitorel::Config->param('TheSchwartz')->{user};
+my $passwd = Monitorel::Config->param('TheSchwartz')->{passwd};
+
 my $dsn = $mysqld->dsn(dbname => '');
-my $dbname = 'test_theschwartz';
 my $dbh = DBI->connect($dsn, 'root', '');
 $dbh->do("CREATE DATABASE $dbname");
 $dbh->do("use $dbname");
@@ -36,8 +33,9 @@ $dbh->do($_) for split /;\s*/, $schema;
 
 subtest 'theschwartz' => sub {
     my $client = TheSchwartz->new(
-        databases => [{ dsn => $mysqld->dsn(dbname => $dbname), user => 'root', passwd => ''} ],
-        verbose   => 1,
+        databases => [{
+            dsn => $mysqld->dsn(dbname => $dbname), user => $user, passwd => $passwd
+        }],
     );
 
     my $rrd_dir = Monitorel::Config->param('rrd_dir');
@@ -58,5 +56,3 @@ subtest 'theschwartz' => sub {
 
     `rm -fr $rrd_dir/localhost`;
 };
-
-done_testing;
