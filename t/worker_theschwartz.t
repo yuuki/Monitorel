@@ -39,7 +39,6 @@ subtest 'theschwartz' => sub {
     );
 
     my $rrd_dir = Monitorel::Config->param('rrd_dir');
-    Monitorel::Worker::Store::RRD::Path->set_rrddir($rrd_dir);
 
     my $job_id = $client->insert('Monitorel::Worker::TheSchwartz', {
         agent => 'Test',

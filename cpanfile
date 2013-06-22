@@ -15,7 +15,6 @@ requires 'Plack::Middleware::AxsLog';
 requires 'Starlet', 0.19;
 
 # Worker
-requires 'Clone';
 requires 'DBI', 1.627;
 requires 'Exporter::Lite';
 requires 'JSON::XS';

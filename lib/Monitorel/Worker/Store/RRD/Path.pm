@@ -1,22 +1,17 @@
 package Monitorel::Worker::Store::RRD::Path;
+use utf8;
 use strict;
 use warnings;
 
 use Cwd qw(getcwd);
 use Carp qw(croak);
-use Clone qw(clone);
 use Path::Class qw(dir);
+
+use Monitorel::Config;
 
 use Exporter::Lite;
 our @EXPORT_OK = qw(get get_relative_path get_absolute_path);
 
-
-#XXX want to add Monitorel::Worker::Config interface
-our $rrd_dir;
-sub set_rrddir{
-    my $class = shift;
-    $rrd_dir  = $_[0];
-}
 
 sub get {
     my ($args) = shift;
@@ -24,26 +19,21 @@ sub get {
 }
 
 sub get_relative_path {
-    my $path_args = shift;
+    my ($path_args) = @_;
     croak("path_args is not ARRAY") if ref($path_args) ne 'ARRAY';
 
-    my $args      = clone $path_args;
-    my $file_path = dir(shift @$args);
-    $file_path    = $file_path->file(join('___', @$args) . '.rrd');
-    return $file_path;
+    my $dir_path = dir(shift @$path_args);
+    return $dir_path->file(join('___', @$path_args) . '.rrd');
 }
 
 sub get_absolute_path {
-    my $args    = shift;
+    my $args = shift;
+    my $rrd_dir = Monitorel::Config->param('rrd_dir');
     croak("args is not ARRAY") if ref($args) ne 'ARRAY';
     croak("rrd_dir is not directory") if not $rrd_dir || not -d $rrd_dir;
 
-    local $rrd_dir = $rrd_dir || getcwd;
-
-    my $rel_path  = get_relative_path($args);
-
-    my $file_path = dir($rrd_dir)->file($rel_path);
-    return $file_path;
+    my $rel_path = get_relative_path($args);
+    return dir($rrd_dir)->file($rel_path);
 }
 
 1;

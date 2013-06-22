@@ -33,7 +33,6 @@ for my $sql (@{$schema->{mysql}}) {
 }
 
 my $rrd_dir = Monitorel::Config->param('rrd_dir');
-Monitorel::Worker::Store::RRD::Path->set_rrddir($rrd_dir);
 
 subtest 'qudo' => sub {
     my $client = Qudo->new(

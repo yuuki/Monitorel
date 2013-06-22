@@ -12,6 +12,7 @@ use Monitorel::Worker::Store::RRD::Path qw(get_absolute_path get_relative_path);
 
 sub new {
     my ($class, $args, $stat) = @_;
+    #TODO Validation
 
     my $label = do {
         if (defined $args->{label} and $args->{label}{$stat}) {
@@ -46,6 +47,7 @@ sub new {
 
 sub create {
     my ($self) = @_;
+    #TODO Validation
 
     my $type = $self->{type};
     my $min  = $self->{type} eq 'DERIVE' ? '0' : 'U';
@@ -73,6 +75,7 @@ sub create {
 
 sub update {
     my ($self, $time, $value) = @_;
+    #TODO Validation
 
     try {
         $self->{rrd}->update([join(':', $time, $value)]);
