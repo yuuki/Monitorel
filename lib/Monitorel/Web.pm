@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 use Amon2::Lite;
+use Log::Minimal;
 use RRDTool::Rawish;
 use Try::Tiny;
 
@@ -19,6 +20,7 @@ get '/rrdtool' => sub {
     try {
         ($commands, $option) = $parser->parse($notation);
     } catch {
+        warnf "$_";
         die 403;
     };
 
