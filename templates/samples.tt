@@ -1,0 +1,21 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <h2>Monitorel graph samples</h2>
+
+    <h3>localhost</h3>
+
+    <h4>Memcached</h4>
+    [%- mark_raw(graph_image_tag([
+      def => { vname => 'cmd_get', object => 'localhost', tag => 'memcached', label => 'cmd_get' },
+      def => { vname => 'get_hits', object => 'localhost', tag => 'memcached', label => 'get_hits' },
+      cdef => { vname => 'hit_rate', value => 'get_hits,cmd_get,/,100,*' },
+      line => { value => 'hit_rate', legend => 'hit_rate' }],
+      {
+        start => 'now-1d', end => 'now', height => 200, width => 400,
+      }
+    )) %]
+  </body>
+</html>
+

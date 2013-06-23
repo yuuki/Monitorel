@@ -10,15 +10,9 @@ use Path::Class qw(dir);
 use Monitorel::Config;
 
 use Exporter::Lite;
-our @EXPORT_OK = qw(get get_relative_path get_absolute_path);
+our @EXPORT_OK = qw(get_path get_absolute_path);
 
-
-sub get {
-    my ($args) = shift;
-    get_absolute_path($args);
-}
-
-sub get_relative_path {
+sub get_path {
     my ($path_args) = @_;
     croak("path_args is not ARRAY") if ref($path_args) ne 'ARRAY';
 
@@ -32,8 +26,8 @@ sub get_absolute_path {
     croak("args is not ARRAY") if ref($args) ne 'ARRAY';
     croak("rrd_dir is not directory") if not $rrd_dir || not -d $rrd_dir;
 
-    my $rel_path = get_relative_path($args);
-    return dir($rrd_dir)->file($rel_path);
+    my $rel_path = get_path($args);
+    return dir($rrd_dir)->file($rel_path)->absolute;
 }
 
 1;

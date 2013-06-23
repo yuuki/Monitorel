@@ -1,0 +1,9 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <h1>Welcome to Monitorel</h1>
+    <p>Monitorel is an application for server metrics Web API.</p>
+    <p><a href='/samples'>development graph samples</a></p>
+  </body>
+</html>

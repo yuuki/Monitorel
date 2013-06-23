@@ -17,6 +17,7 @@ config production  => +{
 };
 
 config development => +{
+    rrd_dir => root->subdir('rrd')->stringify . '/development',
     TheSchwartz => {
         dbname => 'theschwartz',
         user => '',
@@ -31,6 +32,7 @@ config development => +{
 };
 
 config test        => +{
+    rrd_dir => root->subdir('rrd')->stringify . '/test',
     TheSchwartz => {
         dbname => 'test_theschwartz',
         user => '',

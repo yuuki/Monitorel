@@ -117,9 +117,9 @@ for my $tag (keys %$TAGS) {
     };
     for my $stat (@{$TAGS->{$tag}}) {
         my $rrd = Monitorel::Worker::Store::RRD->new($args, $stat);
-        $rrd->create;
-        for my $i (99..0) {
-            $rrd->update(time - $DT*$i, rand(100));
+        $rrd->create(start => 'now-1d', step => $DT);
+        for my $i (reverse(0..130)) {
+            $rrd->update(time - $DT*$i, int(rand(100)));
         }
     }
 }

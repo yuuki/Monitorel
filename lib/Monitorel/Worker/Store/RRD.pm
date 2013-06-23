@@ -8,7 +8,7 @@ use Carp qw(croak);
 use RRDTool::Rawish;
 use Try::Tiny;
 
-use Monitorel::Worker::Store::RRD::Path qw(get_absolute_path get_relative_path);
+use Monitorel::Worker::Store::RRD::Path qw(get_absolute_path);
 
 sub new {
     my ($class, $args, $stat) = @_;
@@ -35,7 +35,7 @@ sub new {
         warn $_;
     };
 
-    my $rrd  = RRDTool::Rawish->new( rrdfile => $path->stringify );
+    my $rrd  = RRDTool::Rawish->new(rrdfile => $path->stringify);
 
     my $self = bless {
         stat => $stat,
@@ -46,8 +46,11 @@ sub new {
 }
 
 sub create {
-    my ($self) = @_;
+    my ($self, %args) = @_;
     #TODO Validation
+
+    my $start = defined $args{start} ? $args{start} : "now-1y";
+    my $step  = defined $args{step} ? $args{step} : 300;
 
     my $type = $self->{type};
     my $min  = $self->{type} eq 'DERIVE' ? '0' : 'U';
@@ -64,8 +67,8 @@ sub create {
             "RRA:MAX:0.5:24:775",
             "RRA:MAX:0.5:288:797"
         ], {
-            "--step"  => "300",
-            "--start" => "now-1h",
+            "--step"  => $step,
+            "--start" => $start,
         });
     } catch {
         warn $_;

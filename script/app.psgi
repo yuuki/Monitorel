@@ -9,6 +9,15 @@ use Monitorel::Config;
 use Monitorel::Web;
 
 builder {
+    enable 'ReverseProxy';
+
+    enable 'Static',
+        path => qr{^(?:/static/)},
+        root => File::Spec->catdir(dirname(__FILE__), '../');
+    enable 'Static',
+        path => qr{^(?:/robots\.txt|/favicon\.ico)$},
+        root => File::Spec->catdir(dirname(__FILE__), '../static');
+
     enable 'Runtime';
     enable 'Head';
 
@@ -18,7 +27,6 @@ builder {
     ) if Monitorel::Config->env eq 'production';
 
     enable 'Log::Minimal', loglevel => 'INFO', autodump => 1;
-    enable 'ReverseProxy';
 
     Monitorel::Web->to_app();
 };

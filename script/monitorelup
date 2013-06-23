@@ -5,40 +5,30 @@ use lib 'lib';
 
 use Path::Class qw(dir);
 use Plack::Runner;
-use Proclet;
 
 my @argv = @ARGV;
 my $APPDIR = dir(__FILE__)->parent->parent;
 
-my $proclet = Proclet->new;
-
 # TODO WorkerManager
 
 # Web Application
-$proclet->service(
-    code => sub {
-
-        my $runner = Plack::Runner->new;
-        $runner->parse_options(
-            '--server' => 'Starlet',
-            '--port'   => 3000,
-            '--app'    => "$APPDIR/script/app.psgi",
-            '--Reload' => join(',', glob('extlib/*/lib'), 'lib'),
-	        '--loader' => 'Shotgun',
-            @argv,
-        );
-        $runner->{env} ||= 'development';
-
-        my $options = +{ @{ $runner->{options} } };
-
-        # --enable-kyt-prof
-        if ($options->{kyt_prof}) {
-            require Devel::KYTProf;
-            Devel::KYTProf->namespace_regex(qr/^Monitorel?/);
-        }
-
-        $runner->run;
-    },
+my $runner = Plack::Runner->new;
+$runner->parse_options(
+    '--server' => 'Starlet',
+    '--port'   => 3000,
+    '--app'    => "$APPDIR/script/app.psgi",
+    '--Reload' => join(',', glob('extlib/*/lib'), 'lib'),
+    '--loader' => 'Shotgun',
+    @argv,
 );
+$runner->{env} ||= 'development';
 
-$proclet->run;
+my $options = +{ @{ $runner->{options} } };
+
+# --enable-kyt-prof
+if ($options->{kyt_prof}) {
+    require Devel::KYTProf;
+    Devel::KYTProf->namespace_regex(qr/^Monitorel?/);
+}
+
+$runner->run;

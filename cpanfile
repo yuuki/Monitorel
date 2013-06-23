@@ -1,9 +1,10 @@
 
 requires 'Config::ENV', 0.12;
 requires 'List::MoreUtils';
+requires 'Module::Functions';
 requires 'Path::Class';
-requires 'Proclet';
-requires 'RRDTool::Rawish', 0.031;
+requires 'RRDTool::Rawish', 0.032;
+requires 'Scalar::Util';
 requires 'Try::Tiny';
 
 # Web

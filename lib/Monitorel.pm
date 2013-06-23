@@ -20,9 +20,6 @@ Monitorel - Generate graph for server statistics
     use TheSchwartz;
     use Monitorel::Worker::Agent::Nginx;
 
-    my $rrd_dir = 'path/to/rrdfile_dir';
-    Monitorel::Worker::Store::RRD::Path->set_rrddir($rrd_dir);
-
     my $client = TheSchwartz->new(
         databases => [{ dsn => $dsn, user => $user, passwd => $passwd }],
         verbose   => 1,

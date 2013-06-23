@@ -1,10 +1,12 @@
-package Monitorel::GraphURLParser;
+package Monitorel::Graph::URLParser;
 use utf8;
 use strict;
 use warnings;
 
 use Carp qw(croak);
 use List::MoreUtils;
+
+use Monitorel::Config;
 use Monitorel::Worker::Store::RRD::Path;
 
 
@@ -90,7 +92,7 @@ sub _graph_to_hash {
             my $object  = $+{object};
             my $tag     = $+{tag}   || '_default';
             my $label   = $+{label} || 'loadavg5';
-            my $rrdfile = Monitorel::Worker::Store::RRD::Path::get_relative_path([
+            my $rrdfile = Monitorel::Worker::Store::RRD::Path::get_absolute_path([
                 $object, $tag, $label
             ])->stringify;
             $option =~ s/^=path:$PATH:/=$rrdfile:/;
