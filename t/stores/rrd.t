@@ -2,11 +2,11 @@ use t::monitoreltest;
 
 use Cwd qw(getcwd);
 
+use Monitorel::Config;
 use Monitorel::Worker::Store::RRD;
 use Monitorel::Worker::Store::RRD::Path;
 
-my $rrd_dir = getcwd . '/tmp';
-Monitorel::Worker::Store::RRD::Path->set_rrddir($rrd_dir);
+my $rrd_dir = Monitorel::Config->param('rrd_dir');
 
 my $rrd = Monitorel::Worker::Store::RRD->new({
     fqdn  => 'localhost',

@@ -1,20 +1,15 @@
-use utf8;
-use strict;
-use warnings;
-use lib lib => 't/lib' => glob 'modules/*/lib';
-
-use Test::More;
+use t::monitoreltest;
 use Test::Fatal;
 
-use Monitorel::GraphURLParser;
+use Monitorel::Graph::URLParser;
 
 subtest 'simple case' => sub {
     my $body = "[(def:usage:::=path:test,mysql:value:MAX)]";
-    my $parser = Monitorel::GraphURLParser->new;
+    my $parser = Monitorel::Graph::URLParser->new;
 
     subtest parse => sub {
         my ($commands, $option) = $parser->parse($body);
-        is_deeply $commands, [ 'DEF:usage=test/mysql___loadavg5.rrd:value:MAX' ];
+        like $commands->[0], qr(DEF:usage=.+test/mysql___loadavg5.rrd:value:MAX);
     };
 
     subtest hosts => sub {
@@ -25,7 +20,7 @@ subtest 'simple case' => sub {
 
 subtest 'complex case' => sub {
     my $body = '[(def:usage:::=test.host__dskUsed.rrd:value:MAX),(def:total:::=test.host__dskTotal.rrd:value:MAX),(cdef:c_warn:::=total,0.85,*),(cdef:c_crit:::=total,0.95,*),(vdef:v_total:::=total,MINIMUM),(vrule:v_rwarn:::@FF8800::dashes=5),(hrule:v_crit:::@FF4400:"critical"),(area:usage:::@00FF00:"Disk Usage"),(line1:c_usage_predict:::@0000FF:"Predict"),(gprint:v_rwarn:::"Reach warning-85%\: %c":strftime)!s=now-1y,e=now+2y,t=Disk Usage,h=200,w=500,ll=0]';
-    my $parser = Monitorel::GraphURLParser->new;
+    my $parser = Monitorel::Graph::URLParser->new;
 
     subtest parse => sub {
         my ($commands, $option) = $parser->parse($body);
@@ -59,7 +54,7 @@ subtest 'complex case' => sub {
 };
 
 subtest 'syntax error' => sub {
-    my $parser = Monitorel::GraphURLParser->new;
+    my $parser = Monitorel::Graph::URLParser->new;
 
     subtest 'tail comma' => sub {
         my $body = "[(def:usage:::=path:test,mysql:value:MAX),]";
@@ -75,5 +70,3 @@ subtest 'syntax error' => sub {
         }, qr(^syntax error: mismatch with <graph>);
     };
 };
-
-done_testing;
