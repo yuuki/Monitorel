@@ -13,19 +13,19 @@ __END__
 
 =head1 NAME
 
-Monitorel - Generate graph for server statistics
+Monitorel - Provide graph API for server metrics
 
 =head1 SYNOPSIS
 
     use TheSchwartz;
-    use Monitorel::Worker::Agent::Nginx;
+    use Monitorel::Worker::TheSchwartz;
 
     my $client = TheSchwartz->new(
         databases => [{ dsn => $dsn, user => $user, passwd => $passwd }],
-        verbose   => 1,
     );
 
-    my $job_id = $client->insert('Monitorel::Worker::Agent::Nginx', {
+    my $job_id = $client->insert('Monitorel::Worker::TheSchwartz', {
+        agent => 'Nginx',
         fqdn  => 'localhost',
         stats => [qw(ActiveConnections AcceptedConnections Requests)],
         tag   => 'nginx',   # Option
@@ -44,10 +44,10 @@ Monitorel - Generate graph for server statistics
 
 =head1 DESCRIPTION
 
-Monitorel::Worker is TheSchwartz worker for retriving several server statistics.
-Monitorel::Worker
-    - has many plugins such as Nginx, MySQL, SNMP, Redis, and so on.
-    - stores statistics values into RRD.
+Monitorel provides graph API for server metrics.
+Monitorel
+    - has many agent plugins such as Nginx, MySQL, SNMP, Redis, and so on.
+    - stores metrics values into RRD.
 
 =head1 AUTHOR
 
@@ -61,31 +61,3 @@ This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
-
-1;
-__END__
-
-
-=head1 NAME
-
-Monitorel - It's new $module
-
-=head1 SYNOPSIS
-
-    use Monitorel;
-
-=head1 DESCRIPTION
-
-Monitorel is ...
-
-=head1 LICENSE
-
-Copyright (C) y_uuki
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=head1 AUTHOR
-
-y_uuki E<lt>yuki.tsubo@gmail.comE<gt>
-
