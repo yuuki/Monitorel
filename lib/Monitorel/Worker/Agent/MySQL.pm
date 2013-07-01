@@ -1,7 +1,6 @@
 package Monitorel::Worker::Agent::MySQL;
 use strict;
 use warnings;
-use parent qw(Monitorel::Worker);
 
 use Carp qw(croak);
 use DBI;

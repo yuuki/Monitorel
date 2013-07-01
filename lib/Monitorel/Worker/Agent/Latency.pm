@@ -1,13 +1,11 @@
 package Monitorel::Worker::Agent::Latency;
 use strict;
 use warnings;
-use parent qw(Monitorel::Worker);
 
 use Carp qw(croak);
-use URI;
 use LWP::UserAgent;
 use Time::HiRes;
-
+use URI;
 
 sub proc {
     my ($class, $args) = @_;

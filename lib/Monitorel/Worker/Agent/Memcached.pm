@@ -1,11 +1,9 @@
 package Monitorel::Worker::Agent::Memcached;
 use strict;
 use warnings;
-use parent qw(Monitorel::Worker);
 
 use Carp qw(croak);
 use IO::Socket::INET;
-
 
 use constant {
     DEFAULT_PORT => 11211,

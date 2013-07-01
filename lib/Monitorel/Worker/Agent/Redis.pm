@@ -2,8 +2,6 @@ package Monitorel::Worker::Agent::Redis;
 use strict;
 use warnings;
 
-use parent qw(Monitorel::Worker);
-
 use Carp qw(croak);
 use IO::Socket::INET;
 

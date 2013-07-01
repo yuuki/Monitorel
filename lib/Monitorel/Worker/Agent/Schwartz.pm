@@ -2,10 +2,8 @@ package Monitorel::Worker::Agent::Schwartz;
 use strict;
 use warnings;
 
-use parent qw(Monitorel::Worker);
-
-use DBI;
 use Carp qw(croak);
+use DBI;
 
 use constant DEFAULT_PORT => 3306;
 

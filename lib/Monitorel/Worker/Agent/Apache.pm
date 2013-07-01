@@ -1,8 +1,6 @@
 package Monitorel::Worker::Agent::Apache;
 use strict;
 use warnings;
-use utf8;
-use parent qw(Monitorel::Worker);
 
 use Carp qw(croak);
 use LWP::UserAgent;

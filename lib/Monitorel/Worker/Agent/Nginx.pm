@@ -1,7 +1,6 @@
 package Monitorel::Worker::Agent::Nginx;
 use strict;
 use warnings;
-use parent 'Monitorel::Worker';
 
 use Carp qw(croak);
 use LWP::UserAgent;

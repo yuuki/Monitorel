@@ -1,13 +1,11 @@
 package Monitorel::Worker::Agent::SNMP;
 use strict;
 use warnings;
-use parent qw(Monitorel::Worker);
 
 use Carp qw(croak);
 use Clone qw(clone);
-use Net::SNMP;
 use File::Which qw(which);
-
+use Net::SNMP;
 
 sub proc {
     my ($class, $args) = @_;
