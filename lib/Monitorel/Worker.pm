@@ -3,10 +3,10 @@ use strict;
 use warnings;
 
 use Carp qw(croak);
+use Log::Minimal;
 use Module::Load qw(load);
 
 use Monitorel::Worker::Store::RRD;
-
 
 sub fetch_and_store_stat {
     my ($class, $args) = @_;
@@ -23,6 +23,7 @@ sub fetch_and_store_stat {
         my $rrd = Monitorel::Worker::Store::RRD->new($args, $stat);
         $rrd->create;
         $rrd->update(time, $stat_to_value->{$stat} || 0);
+        infof "stat:$stat value:$stat_to_value->{$stat}";
     }
 }
 

@@ -13,18 +13,29 @@ common +{
 };
 
 config production  => +{
+    'worker.dsn' => [
+        "dbi:mysql:dbname=monitorel_worker;host=localhost",
+        'nobody',
+        'nobody',
+    ],
     eval { load root->file('config/deployment.pl')->stringify }
 };
 
 config development => +{
+    'worker.dsn' => [
+        "dbi:mysql:dbname=monitorel_worker;host=localhost",
+        'nobody',
+        'nobody',
+    ],
+
     rrd_dir => root->subdir('rrd')->stringify . '/development',
     TheSchwartz => {
-        dbname => 'theschwartz',
+        dbname => 'monitorel_worker',
         user => '',
         passwd => '',
     },
     Qudo => {
-        dbname => 'qudo',
+        dbname => 'monitorel_worker',
         default_hooks => ['Qudo::Hook::Serialize::JSON'],
         work_delay    => 5,
     },
@@ -32,14 +43,20 @@ config development => +{
 };
 
 config test        => +{
+    'worker.dsn' => [
+        "dbi:mysql:dbname=test_monitorel_worker;host=localhost",
+        'nobody',
+        'nobody',
+    ],
+
     rrd_dir => root->subdir('rrd')->stringify . '/test',
     TheSchwartz => {
-        dbname => 'test_theschwartz',
+        dbname => 'test_monitorel_worker',
         user => '',
         passwd => '',
     },
     Qudo => {
-        dbname => 'test_qudo',
+        dbname => 'test_monitorel_worker',
         default_hooks => ['Qudo::Hook::Serialize::JSON'],
         work_delay    => 5,
     },

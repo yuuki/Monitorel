@@ -3,7 +3,7 @@
 dbname=$1
 
 if [ "${dbname}" = '' ] ; then
-    dbname=theschwartz
+    dbname=monitorel_worker
 fi
 
 if mysqladmin -uroot create $dbname ; then

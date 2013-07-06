@@ -1,6 +1,6 @@
 # NAME
 
-Monitorel - Generate graph for server statistics
+Monitorel - Generate graph for server metrics
 
 # SYNOPSIS
 

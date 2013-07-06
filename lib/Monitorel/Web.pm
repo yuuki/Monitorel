@@ -4,7 +4,6 @@ use warnings;
 use parent qw(Monitorel Amon2::Web);
 
 use Log::Minimal;
-use RRDTool::Rawish;
 use Scalar::Util ();
 use Try::Tiny;
 

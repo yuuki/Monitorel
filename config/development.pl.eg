@@ -1,2 +1,5 @@
 +{
+  'worker.dsn' => [
+    "dbi:mysql:dbname=monitorel;host=;localhost"
+  ],
 }

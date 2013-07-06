@@ -5,6 +5,7 @@ requires 'Module::Functions';
 requires 'Path::Class';
 requires 'RRDTool::Rawish', 0.032;
 requires 'Scalar::Util';
+requires 'Scope::Container::DBI', 0.09;
 requires 'Try::Tiny';
 
 # Web
@@ -25,6 +26,7 @@ requires 'Net::SNMP', '6.0.1';
 requires 'Net::Telnet';
 requires 'Qudo', 0.0213;
 requires 'TheSchwartz', 1.10;
+requires 'TheSchwartz::Simple', 0.05;
 requires 'Time::HiRes';
 
 on 'test' => sub {
