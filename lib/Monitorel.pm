@@ -13,10 +13,11 @@ __END__
 
 =head1 NAME
 
-Monitorel - Provide graph API for server metrics
+Monitorel - A Web API providing server performance metrics graphs
 
 =head1 SYNOPSIS
 
+    # Enqueue Job
     use TheSchwartz;
     use Monitorel::Worker::TheSchwartz;
 
@@ -41,6 +42,11 @@ Monitorel - Provide graph API for server metrics
         },
     });
 
+    # Dequeue Job
+    perl script/parallel_worker_dispatcher.pl
+
+    # Web API for graph image (Memcached hit rate sample)
+    curl http://localhost/rrdtool?s=[(def:cmd_get:::=path:localhost,memcached,cmd_get:value:AVERAGE),(def:get_hits:::=path:localhost,memcached,get_hits:value:AVERAGE),(cdef:hit_rate:::=get_hits,cmd_get,/,100,*),(line1:hit_rate:::@0000ff:hit_rate)!end=now,height=200,start=now-1d,width=400]
 
 =head1 DESCRIPTION
 
@@ -48,6 +54,14 @@ Monitorel provides graph API for server metrics.
 Monitorel
     - has many agent plugins such as Nginx, MySQL, SNMP, Redis, and so on.
     - stores metrics values into RRD.
+
+=head2 SETUP SAMPLES
+
+    # Generate rrdfiles with random metrics
+    perl ./script/rrdsetup.pl
+
+    # Access sample graph endpoint
+    http://localhost:3000/samples
 
 =head1 AUTHOR
 
