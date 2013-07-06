@@ -37,7 +37,7 @@ my $rrd_dir = Monitorel::Config->param('rrd_dir');
 subtest 'qudo' => sub {
     my $client = Qudo->new(
         databases => [
-            { dsn => $mysqld->dsn(dbname => $dbname), user => $user, passwd => $passwd }
+            { dsn => $mysqld->dsn(dbname => $dbname), username => $user, password => $passwd }
         ],
         default_hooks => [qw(Qudo::Hook::Serialize::JSON)],
     );

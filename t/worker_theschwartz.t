@@ -34,7 +34,7 @@ $dbh->do($_) for split /;\s*/, $schema;
 subtest 'theschwartz' => sub {
     my $client = TheSchwartz->new(
         databases => [{
-            dsn => $mysqld->dsn(dbname => $dbname), user => $user, passwd => $passwd
+            dsn => $mysqld->dsn(dbname => $dbname), user => $user, pass => $passwd
         }],
     );
 

@@ -21,7 +21,7 @@ Monitorel - Provide graph API for server metrics
     use Monitorel::Worker::TheSchwartz;
 
     my $client = TheSchwartz->new(
-        databases => [{ dsn => $dsn, user => $user, passwd => $passwd }],
+        databases => [{ dsn => $dsn, user => $user, pass => $passwd }],
     );
 
     my $job_id = $client->insert('Monitorel::Worker::TheSchwartz', {
