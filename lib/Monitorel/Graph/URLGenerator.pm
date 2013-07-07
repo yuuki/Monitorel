@@ -4,12 +4,6 @@ use warnings;
 
 use Carp qw(croak);
 
-use Exporter::Lite;
-our @EXPORT = qw(
-    graph_image_tag
-    graph_url_for
-);
-
 use constant {
     COLOR_PALETTE   => [qw(
         @0000ff @ff0000 @00ff00 @ff00ff @999900 @7777FF @883333 @22aa22 @FF3333
@@ -18,12 +12,13 @@ use constant {
 };
 
 sub graph_image_tag {
-    my $url = graph_url_for(@_);
+    my $class = shift;
+    my $url = $class->graph_url_for(@_);
     return "<img src='$url'>";
 }
 
 sub graph_url_for {
-    my ($args, $global_option) = @_;
+    my ($class, $args, $global_option) = @_;
 
     $global_option ||= {};
     croak 'global option must be Hashref' if ref($global_option) ne 'HASH';
@@ -34,36 +29,8 @@ sub graph_url_for {
         croak "param must be Hashref: $inst" if ref($param) ne 'HASH';
         my $str = "";
 
-        if ($inst eq 'def') {
-            my $tag   = defined $param->{tag} ? $param->{tag} : '';
-            my $label = defined $param->{label} ? $param->{label} : '';
-            my $path  = join ',', $param->{object}, $tag, $label;
-            my $type  =  uc($param->{type} || 'AVERAGE');
-            $str .= sprintf("%s:%s:::=path:%s:value:%s", $inst, $param->{vname}, $path, $type);
-        }
-        elsif ($inst eq 'cdef' || $inst eq 'vdef') {
-            $str .= sprintf("%s:%s:::=%s", $inst, $param->{vname}, $param->{value});
-        }
-        elsif ($inst eq 'line') {
-            my $width  = $param->{width} || 1;
-            my $value  = $param->{value} or croak "requried $inst 'value' key";
-            my $color  = $param->{color} || COLOR_PALETTE->[($i++ % COLOR_NUM)];
-            my $legend = $param->{legend} || $value;
-            my $stack  = exists($param->{stack}) && $param->{stack} ? ':STACK' : '';
-            $str .= sprintf("%s%d:%s:::%s:%s%s", $inst, $width, $value, $color, $legend, $stack);
-        }
-        elsif ($inst eq 'area') {
-            my $value  = $param->{value} or croak "requried $inst 'value' key";
-            my $color  = $param->{color} || COLOR_PALETTE->[($i++ % COLOR_NUM)];
-            my $legend = $param->{legend} || $value;
-            my $stack  = exists($param->{stack}) && $param->{stack} ? ':STACK' : '';
-            $str .= sprintf("%s:%s:::%s:%s%s", $inst, $value, $color, $legend, $stack);
-        }
-        elsif ($inst eq 'vrule' || $inst eq 'hrule') {
-            my $value  = $param->{value} or croak "requried $inst 'value' key";
-            my $color  = $param->{color} || COLOR_PALETTE->[($i++ % COLOR_NUM)];
-            my $legend = $param->{legend} || $value;
-            $str .= sprintf("%s:%s:::%s%s", $inst, $value, $color, $legend);
+        if (my $code = $class->can("_build_$inst")) {
+            $str .= $code->($inst, $param);
         }
         else {
             croak "Not supported inst: $inst";
@@ -85,5 +52,52 @@ sub graph_url_for {
     my $s = join ',', @$graphs;
     return sprintf("/rrdtool?s=[%s%s]", $s, $option);
 }
+
+sub _build_def {
+    my ($inst, $param) = @_;
+
+    my $tag   = defined $param->{tag} ? $param->{tag} : '';
+    my $label = defined $param->{label} ? $param->{label} : '';
+    my $path  = join ',', $param->{object}, $tag, $label;
+    my $type  = uc($param->{type} || 'AVERAGE');
+    return sprintf("%s:%s:::=path:%s:value:%s", $inst, $param->{vname}, $path, $type);
+}
+
+sub _build_cdef {
+    my ($inst, $param) = @_;
+    return sprintf("%s:%s:::=%s", $inst, $param->{vname}, $param->{value});
+}
+*_build_vdef = \&_build_cdef;
+
+sub _build_line {
+    my ($inst, $param, $i) = @_;
+
+    my $width  = $param->{width} || 1;
+    my $value  = $param->{value} or croak "requried $inst 'value' key";
+    my $color  = $param->{color} || COLOR_PALETTE->[($i++ % COLOR_NUM)];
+    my $legend = $param->{legend} || $value;
+    my $stack  = defined $param->{stack} && $param->{stack} ? ':STACK' : '';
+    return sprintf("%s%d:%s:::%s:%s%s", $inst, $width, $value, $color, $legend, $stack);
+}
+
+sub _build_area {
+    my ($inst, $param, $i) = @_;
+
+    my $value  = $param->{value} or croak "requried $inst 'value' key";
+    my $color  = $param->{color} || COLOR_PALETTE->[($i++ % COLOR_NUM)];
+    my $legend = $param->{legend} || $value;
+    my $stack  = defined($param->{stack}) && $param->{stack} ? ':STACK' : '';
+    return sprintf("%s:%s:::%s:%s%s", $inst, $value, $color, $legend, $stack);
+}
+
+sub _build_vrule {
+    my ($inst, $param, $i) = @_;
+
+    my $value  = $param->{value} or croak "requried $inst 'value' key";
+    my $color  = $param->{color} || COLOR_PALETTE->[($i++ % COLOR_NUM)];
+    my $legend = $param->{legend} || $value;
+    return sprintf("%s:%s:::%s%s", $inst, $value, $color, $legend);
+}
+*_build_hrule = \&_build_vrule;
 
 1;

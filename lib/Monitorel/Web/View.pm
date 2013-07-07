@@ -21,7 +21,6 @@ sub make_instance {
         'module'   => [qw(
             Text::Xslate::Bridge::Star
             Monitorel::Web::ViewFunctions
-            Monitorel::Graph::URLGenerator
         )],
         'function' => {
         },
