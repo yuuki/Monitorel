@@ -7,7 +7,7 @@ use File::Spec;
 use Exporter::Lite;
 our @EXPORT = get_public_functions();
 
-use Monitorel::Graph::URLGenerator;
+use Monitorel::Graph::URLBuilder;
 
 sub commify {
     local $_  = shift;
@@ -20,11 +20,11 @@ sub uri_with { Amon2->context()->req->uri_with(@_) }
 sub uri_for { Amon2->context()->uri_for(@_) }
 
 sub graph_image_tag {
-    Monitorel::Graph::URLGenerator->graph_image_tag(@_);
+    Monitorel::Graph::URLBuilder->graph_image_tag(@_);
 }
 
 sub graph_url_for {
-    Monitorel::Graph::URLGenerator->graph_url_for(@_);
+    Monitorel::Graph::URLBuilder->graph_url_for(@_);
 }
 
 {
