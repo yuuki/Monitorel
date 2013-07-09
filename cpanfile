@@ -9,7 +9,7 @@ requires 'Scope::Container::DBI', 0.09;
 requires 'Try::Tiny';
 
 # Web
-requires 'Amon2::Lite';
+requires 'Amon2';
 requires 'Plack';
 requires 'Plack::Middleware::ReverseProxy', 0.09;
 requires 'Plack::Middleware::Log::Minimal';
