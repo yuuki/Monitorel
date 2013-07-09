@@ -3,8 +3,6 @@ use strict;
 use warnings;
 
 use Carp qw(croak);
-use Clone qw(clone);
-use File::Which qw(which);
 use Net::SNMP;
 
 sub proc {
