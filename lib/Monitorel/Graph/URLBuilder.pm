@@ -1,4 +1,4 @@
-package Monitorel::Graph::URLBuidler;
+package Monitorel::Graph::URLBuilder;
 use strict;
 use warnings;
 
