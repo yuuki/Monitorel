@@ -14,6 +14,13 @@ sub work {
     my $class = shift;
     my $job   = shift;
 
+    local $Log::Minimal::PRINT = sub {
+        my ($time, $type, $message, $trace, $raw_message) = @_;
+        open(my $fh, ">>", "log/worker.log")
+            or die "cannot open worker.log";
+        print $fh "$time [$type] $message at $trace\n";
+    };
+
     try {
         Monitorel::Worker->fetch_and_store_stat($job->arg);
     } catch {

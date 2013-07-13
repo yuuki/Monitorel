@@ -4,6 +4,8 @@ use warnings;
 use Getopt::Long;
 use Module::Load;
 
+$ENV{PLACK_ENV} ||= 'development';
+
 use Monitorel::Worker::TheSchwartz;
 use Monitorel::Worker::Qudo;
 
@@ -26,7 +28,7 @@ sub main {
     my $dequeue_class = "Monitorel::Worker::Dequeue::$message_queue";
     load $dequeue_class;
 
-    $dequeue_class->run($max_workers);
+    $dequeue_class->run(["Monitorel::Worker::$message_queue"], $max_workers);
 }
 
 =head1 NAME
