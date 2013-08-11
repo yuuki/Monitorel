@@ -39,12 +39,3 @@ parallel_worker_dispatcher.pl - Dispatch parallelly Monitorel::Worker jobs
 
     % parallel_worker_dispatcher.pl
 
-        --message_queue=theschwartz   basic flavour (default)
-        --flavor=Lite    Amon2::Lite flavour (need to install)
-        --flavor=Minimum minimalistic flavour for benchmarking
-
-        --vc=Git         setup the git repository (default)
-
-        --list-flavors (or -l) Shows the list of flavors installed
-
-        --help   Show this help
